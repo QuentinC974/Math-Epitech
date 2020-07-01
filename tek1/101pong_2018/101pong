@@ -1,0 +1,94 @@
+#!/usr/bin/php
+<?php
+function print_usage()
+{
+  $usage = "USAGE\n\t./101pong x0 y0 z0 x1 y1 z1 n\n";
+  $usage .= "\nDESCRIPTION\n\tx0\tball abscissa at time t - 1\n\t";
+  $usage .= "y0\tball ordinate at time t - 1\n\t";
+  $usage .= "z0\tball altitude at time t - 1\n\t";
+  $usage .= "x1\tball abscissa at time t\n\t";
+  $usage .= "y1\tball ordinate at time t\n\t";
+  $usage .= "z1\tball altitude at time t\n\t";
+  $usage .= "n\ttime shift (greater than or equal to zero, integer)\n";
+  echo $usage;
+}
+function velocity($tab) 
+{
+    $i = 1;
+    $array = array();
+    while ($i <= 3) {
+        $array[$i - 1] = $tab[$i + 3] - $tab[$i];
+        $i++;
+    }
+    printf("The velocity vector of the ball is:\n(%.2f, %.2f, %.2f)\n", $array[0], $array[1], $array[2]);
+    return ($array);   
+}
+
+function ball_advencement($dest, $array)
+{
+    $dest_array = array();
+    $dest_array[0] = ($array[0] * $dest[7]) + $dest[4]; 
+    $dest_array[1] = ($array[1] * $dest[7]) + $dest[5];
+    $dest_array[2] = ($array[2] * $dest[7]) + $dest[6];
+    printf("At time t + %d, ball coordinates will be :\n(%.2f, %.2f, %.2f)\n", $dest[7], $dest_array[0], $dest_array[1], $dest_array[2]);
+    return ($dest_array);
+}
+
+function incidence($argv, $array)
+{
+    $Proj = array();
+    $Norm = array();
+
+    if (($argv[6] >= 0 && $array[2] < 0) || ($argv[6] <= 0 && $array[2] > 0)) {
+        $Proj[0] = $array[0] / sqrt(pow($array[0], 2) + pow($array[1],2));
+        $Proj[1] = $array[1] / sqrt(pow($array[0], 2) + pow($array[1],2));
+        $Proj[2] = 0;
+        $Norm[0] = $array[0] / sqrt(pow($array[0], 2) + pow($array[1],2) + pow($array[2],2));
+        $Norm[1] = $array[1] / sqrt(pow($array[0], 2) + pow($array[1],2) + pow($array[2],2));
+        $Norm[2] = $array[2] / sqrt(pow($array[0], 2) + pow($array[1],2) + pow($array[2],2));
+        $Angle = acos($Proj[0] * $Norm[0] + $Proj[1] * $Norm[1] + $Proj[2] * $Norm[2]);   
+        printf("The incidence angle is :\n%.2f degrees\n", $Angle * 180 / pi());
+    }
+    else
+        echo "The ball won't reach the bat.\n";
+}
+
+function check_err($argv)
+{
+    $cpt = 7;
+
+    while ($cpt != 0) {
+        $num = is_numeric($argv[$cpt]);
+        if ($num == FALSE)
+            return(84);
+        $cpt--;
+    }
+    if ($argv[7] < 0)
+        return (84);
+    return(1);
+}
+
+function test($argc, $argv)
+{
+    $argc = count($argv);
+    if ($argc != 8) {
+        if ($argv[1] == "-h") {
+            print_usage();
+            return (84);
+        }
+        echo("bad arguments\n");
+        return(84);
+    }
+    $err = check_err($argv);
+    if ($err != 84) {
+        $array = velocity($argv);
+        $dest_array = ball_advencement($argv, $array);
+        $Angle = incidence($argv, $array);
+        return(true);
+    }
+    echo("bad arguments\n");
+    return(84);
+}
+
+test($argc, $argv);
+?>

@@ -1,0 +1,36 @@
+#!/usr/bin/php
+
+<?php
+function velocity($tab) 
+{
+    $i = 1;
+    $array = array();
+    while ($i <= 3) {
+        $array[$i - 1] = $tab[$i + 3] - $tab[$i];
+        $i++;
+    }
+    printf("The velocity vector of the ball is:\n(%.2f, %.2f, %.2f)\n", $array[0], $array[1], $array[2]);
+    return ($array);   
+}
+function ball_advencement($dest, $array)
+{
+    $dest_array = array();
+    $dest_array[0] = ($array[0] * $dest[7]) + $dest[4]; 
+    $dest_array[1] = ($array[1] * $dest[7]) + $dest[5];
+    $dest_array[2] = ($array[2] * $dest[7]) + $dest[6];
+    printf("At time t + %d, ball coordinates will be :\n(%.2f, %.2f, %.2f)\n", $dest[7], $dest_array[0], $dest_array[1], $dest_array[2]);
+    return ($dest_array);
+}
+
+function test($argc, $argv)
+{
+    $argc = count($argv);
+    if ($argc != 8) {
+        echo("bad arguments");
+        return(84);
+    }
+    $array = velocity($argv);
+    ball_advencement($argv, $array);
+}
+test($argc, $argv);
+?>  
